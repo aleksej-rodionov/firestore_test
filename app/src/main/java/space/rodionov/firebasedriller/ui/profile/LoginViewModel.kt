@@ -8,14 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import space.rodionov.firebasedriller.data.FirestoreRepository
+import space.rodionov.firebasedriller.data.MainRepository
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -23,10 +22,9 @@ const val REQUEST_CODE_SIGN_IN = 1
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: FirestoreRepository,
+    private val repository: MainRepository,
     private val state: SavedStateHandle
 ) : ViewModel() {
-//    val auth = FirebaseAuth.getInstance()
 val auth = repository.auth
 
     var em = state.get<String>("email") ?: ""
@@ -54,32 +52,6 @@ val auth = repository.auth
         data class LoginSnackbar(val msg: String) : LoginEvent()
         data class LoginActivity(val intent: Intent, val requestCode: Int) : LoginEvent()
     }
-
-//=============================REPO CALLS================================
-
-//    fun loginUser() {
-//        val email = em
-//        val password = pw
-//        val errorMsg = FirestoreRepository.loginUser(viewModelScope, email, password)
-//        viewModelScope.launch {
-//            if (errorMsg != null) {
-//                loginEventChannel.send(LoginEvent.LoginSnackbar(errorMsg))
-//            } else {
-//                loginEventChannel.send(LoginEvent.NavigateLoggedIn(email, password, emailLoggedInMsg))
-//            }
-//        }
-//    }
-//
-//    fun googleAuthForFirebase(account: GoogleSignInAccount) {
-//        val errorMsg = FirestoreRepository.googleAuthForFirebase(viewModelScope, account)
-//        viewModelScope.launch {
-//            if (errorMsg != null) {
-//                loginEventChannel.send(LoginEvent.LoginSnackbar(errorMsg))
-//            } else {
-//                loginEventChannel.send(LoginEvent.NavigateLoggedIn(null, null, googleLoggedInMsg))
-//            }
-//        }
-//    }
 
 //=============================METHODS===================================
 

@@ -4,16 +4,13 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import space.rodionov.firebasedriller.data.FirestoreRepository
+import space.rodionov.firebasedriller.data.MainRepository
 import space.rodionov.firebasedriller.data.Note
 import space.rodionov.firebasedriller.ui.ADD_NOTE_RESULT_OK
 import space.rodionov.firebasedriller.ui.EDIT_NOTE_RESULT_OK
@@ -23,13 +20,11 @@ private const val TAG = "EditNoteViewModel LOGS"
 
 @HiltViewModel
 class EditNoteViewModel @Inject constructor(
-    private val repository: FirestoreRepository,
+    private val repository: MainRepository,
     private val state: SavedStateHandle
 ) : ViewModel() {
-    //val auth = FirebaseAuth.getInstance()
     val auth = repository.auth
 
-    //val notesCollectionRef = Firebase.firestore.collection("notes")
     val notesCollectionRef = repository.notesCollectionRef
 
 //=================================SAVED STATE HANDLE=============================
@@ -75,8 +70,13 @@ class EditNoteViewModel @Inject constructor(
         }
 
         if (auth.currentUser == null) {
-            showMsg("You need to log in to create and edit notes")
-            return
+            if (note != null) {
+                val updatedNote = note.copy(noteText, notePriority, noteComplited, note.created, noteAuthorId)
+                updateNoteInRoom(updatedNote)
+            } else {
+                val newNote = Note(noteText, notePriority, false)
+                createNoteInRoom(newNote)
+            }
         } else {
             if (note != null) {
                 val noteMap = getNewNoteMap()
@@ -96,7 +96,17 @@ class EditNoteViewModel @Inject constructor(
 
 //==================================ROOM METHODS==============================================
 
+    private fun updateNoteInRoom(note: Note) = viewModelScope.launch {
+        repository.updateNote(note)
+        Log.d(TAG, "updateNoteInRoom: Note updated in ROOM")
+        editNoteEventChannel.send(EditNoteEvent.NavBackWithResult(EDIT_NOTE_RESULT_OK))
+    }
 
+    private fun createNoteInRoom(note: Note) = viewModelScope.launch {
+        repository.insertNote(note)
+        Log.d(TAG, "updateNoteInRoom: Note saved in ROOM")
+        editNoteEventChannel.send(EditNoteEvent.NavBackWithResult(ADD_NOTE_RESULT_OK))
+    }
 
 //===================================FIRESTORE METHODS============================================
 

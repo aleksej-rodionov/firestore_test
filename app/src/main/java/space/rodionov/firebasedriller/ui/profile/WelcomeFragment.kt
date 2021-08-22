@@ -23,8 +23,10 @@ class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentWelcomeBinding.bind(view)
 
+        val username = args.username ?: "noname"
+
         binding.apply {
-            tvWelcome.text = "Welcome${", "+args.username}!\nYou successfully ${args.madeAction}"
+            tvWelcome.text = "Welcome${", "+username}!\nYou successfully ${args.madeAction}"
 
             btnOk.setOnClickListener {
                 viewModel.ok()

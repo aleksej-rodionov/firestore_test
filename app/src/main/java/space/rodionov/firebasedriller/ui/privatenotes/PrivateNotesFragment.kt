@@ -40,7 +40,7 @@ class PrivateNotesFragment : Fragment(R.layout.fragment_private_notes) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentPrivateNotesBinding.bind(view)
 
-        viewModel.subscribeToRealtimeUpdates()
+        viewModel.subscribeToNotes()
 
         notesAdapter = NotesAdapter(
             onNoteClick = {

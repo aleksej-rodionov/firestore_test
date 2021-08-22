@@ -8,4 +8,7 @@
     <string name="note_text">Note text</string>
     <string name="high_priority">High priority</string>
     <string name="edit_note">Edit note</string>
+    <string name="you_have_local_notes">You have some notes in local memory which are not uploaded to your account. You can upload them now</string>
+    <string name="take_a_look">Take a look</string>
+    <string name="skip">Skip</string>
 </resources>

@@ -3,19 +3,18 @@ package space.rodionov.firebasedriller.ui.profile
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import space.rodionov.firebasedriller.data.FirestoreRepository
+import space.rodionov.firebasedriller.data.MainRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val repository: FirestoreRepository,
+    private val repository: MainRepository,
     private val state: SavedStateHandle
 ) : ViewModel() {
     var em = state.get<String>("email") ?: ""
@@ -36,7 +35,6 @@ class SignUpViewModel @Inject constructor(
 
     val actionMade = "registered"
 
-//    val auth = FirebaseAuth.getInstance()
 val auth = repository.auth
 
 //==========================EVENT CHANNEL===========================
@@ -49,22 +47,6 @@ val auth = repository.auth
         data class SignUpSnackbar(val msg: String) : SignUpEvent()
 
     }
-
-//===================================REPO CALLS=========================================
-
-//    fun registerUserEmailAndPassword() {
-//        val username = un
-//        val email = em
-//        val password = pw
-//        val errorMsg = FirestoreRepository.registerUserEmailAndPassword(viewModelScope, username, email, password)
-//        viewModelScope.launch {
-//            if (errorMsg != null) {
-//                signUpEventChannel.send(SignUpEvent.SignUpSnackbar(errorMsg))
-//            }else {
-//                signUpEventChannel.send(SignUpEvent.NavigateSignedUp(em, pw, actionMade))
-//            }
-//        }
-//    }
 
 //=============================METHODS===================================
 

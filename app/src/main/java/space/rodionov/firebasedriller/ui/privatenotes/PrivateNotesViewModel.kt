@@ -6,13 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import space.rodionov.firebasedriller.data.FirestoreRepository
+import space.rodionov.firebasedriller.data.MainRepository
 import space.rodionov.firebasedriller.data.Note
 import space.rodionov.firebasedriller.ui.ADD_NOTE_RESULT_OK
 import space.rodionov.firebasedriller.ui.EDIT_NOTE_RESULT_OK
@@ -22,12 +19,10 @@ private const val TAG = "ViewModel LOGS"
 
 @HiltViewModel
 class PrivateNotesViewModel @Inject constructor(
-    private val reposiroty: FirestoreRepository
+    private val reposiroty: MainRepository
 ) : ViewModel() {
-    //val auth = FirebaseAuth.getInstance()
     val auth = reposiroty.auth
 
-    //val notesCollectionRef = Firebase.firestore.collection("notes")
     val notesCollectionRef = reposiroty.notesCollectionRef
 
 
@@ -53,7 +48,91 @@ class PrivateNotesViewModel @Inject constructor(
 
 //==================================METHODS================================
 
-    fun subscribeToRealtimeUpdates() {
+    fun subscribeToNotes() {
+        if (auth.currentUser != null) {
+            subscribeToRealtimeUpdates()
+        } else {
+            subscribeToFlowInRoom()
+        }
+    }
+
+    fun updateNotesFlow(notes: List<Note>) {
+        Log.d(TAG, "upd $notes")
+        _notesFlow.value = notes
+    }
+
+    fun completedCheck(note: Note, completed: Boolean) {
+        if (auth.currentUser != null) {
+            completedCheckInFirestore(note, completed)
+        } else {
+            completedCheckInRoom(note, completed)
+        }
+    }
+
+    fun deleteNote(note: Note) {
+        if (auth.currentUser != null) {
+            deleteNoteInFirestore(note)
+        } else {
+            deleteNoteInRoom(note)
+        }
+    }
+
+    fun saveNote(note: Note) {
+        if (auth.currentUser != null) {
+            saveNoteInFirestore(note)
+        } else {
+            saveNoteInRoom(note)
+        }
+    }
+
+    fun onAddEditResult(result: Int) {
+        when (result) {
+            ADD_NOTE_RESULT_OK -> showSnackbar("Note added")
+            EDIT_NOTE_RESULT_OK -> showSnackbar("Note edited")
+        }
+    }
+
+    fun editNote(note: Note) = viewModelScope.launch {
+        privateNotesEventChannel.send(PrivateNotesEvent.NavEditNote(note))
+    }
+
+    fun showSnackbar(msg: String) = viewModelScope.launch {
+        privateNotesEventChannel.send(PrivateNotesEvent.PrivateNotesSnackbar(msg))
+    }
+
+    fun newNote() = viewModelScope.launch {
+        privateNotesEventChannel.send(PrivateNotesEvent.NavAddNote)
+    }
+
+//=====================================ROOM METHODS===================================
+
+    private fun subscribeToFlowInRoom() = viewModelScope.launch {
+        reposiroty.getAllNotes().collectLatest {
+            updateNotesFlow(it)
+        }
+    }
+
+    fun completedCheckInRoom(note: Note, completed: Boolean) = viewModelScope.launch {
+        reposiroty.updateNote(note.copy(completed = completed))
+    }
+
+    fun deleteNoteInRoom(note: Note) = viewModelScope.launch {
+        reposiroty.deleteNote(note)
+        privateNotesEventChannel.send(
+            PrivateNotesEvent.PrivateNoteInteractiveSnackbar(
+                "Note deleted",
+                note
+            )
+        )
+    }
+
+    fun saveNoteInRoom(note: Note) = viewModelScope.launch {
+        reposiroty.insertNote(note)
+    }
+
+//===================================FIRESTORE METHODS===============================
+
+    private fun subscribeToRealtimeUpdates() {
         if (auth.currentUser == null) {
             showSnackbar("You need to log in to see your notes")
             _notesFlow.value = oriList
@@ -83,19 +162,7 @@ class PrivateNotesViewModel @Inject constructor(
         }
     }
 
-    fun updateNotesFlow(notes: List<Note>) {
-        Log.d(TAG, "upd $notes")
-        _notesFlow.value = notes
-    }
-
-    fun onAddEditResult(result: Int) {
-        when (result) {
-            ADD_NOTE_RESULT_OK -> showSnackbar("Note added")
-            EDIT_NOTE_RESULT_OK -> showSnackbar("Note edited")
-        }
-    }
-
-    fun completedCheck(note: Note, completed: Boolean) = viewModelScope.launch {
+    fun completedCheckInFirestore(note: Note, completed: Boolean) = viewModelScope.launch {
 
         auth.currentUser?.let {
             val noteQuery = notesCollectionRef
@@ -122,7 +189,7 @@ class PrivateNotesViewModel @Inject constructor(
         }
     }
 
-    fun deleteNote(note: Note) = viewModelScope.launch {
+    fun deleteNoteInFirestore(note: Note) = viewModelScope.launch {
 
         auth.currentUser?.let {
             val noteQuery = notesCollectionRef
@@ -157,7 +224,7 @@ class PrivateNotesViewModel @Inject constructor(
         }
     }
 
-    fun saveNote(note: Note) = viewModelScope.launch {
+    fun saveNoteInFirestore(note: Note) = viewModelScope.launch {
         try {
             notesCollectionRef.add(note).await()
         } catch (e: Exception) {
@@ -167,18 +234,6 @@ class PrivateNotesViewModel @Inject constructor(
                 )
             )
         }
-    }
-
-    fun editNote(note: Note) = viewModelScope.launch {
-        privateNotesEventChannel.send(PrivateNotesEvent.NavEditNote(note))
-    }
-
-    fun showSnackbar(msg: String) = viewModelScope.launch {
-        privateNotesEventChannel.send(PrivateNotesEvent.PrivateNotesSnackbar(msg))
-    }
-
-    fun newNote() = viewModelScope.launch {
-        privateNotesEventChannel.send(PrivateNotesEvent.NavAddNote)
     }
 }
 
