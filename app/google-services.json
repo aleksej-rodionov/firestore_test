@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "252908222966",
+    "project_id": "fir-driller",
+    "storage_bucket": "fir-driller.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252908222966:android:a0bc3f2f7f261c61fbefd7",
+        "android_client_info": {
+          "package_name": "space.rodionov.firebasedriller"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "252908222966-7bb5lked7idg9hbft5uc8lmvc7cploqj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjIP4RpcVuEMulO4aVmUHLd3vOseYRHxg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "252908222966-7bb5lked7idg9hbft5uc8lmvc7cploqj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

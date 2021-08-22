@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FirebaseDriller</string>
+    <string name="webclient_id"></string>
+    <string name="account">Account</string>
+    <string name="no_items">There are no items</string>
+    <string name="add_note">Add note</string>
+    <string name="new_note">New note</string>
+    <string name="note_text">Note text</string>
+    <string name="high_priority">High priority</string>
+    <string name="edit_note">Edit note</string>
+</resources>

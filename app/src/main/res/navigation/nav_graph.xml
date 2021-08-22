@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/privateNotesFragment">
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="space.rodionov.firebasedriller.ui.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="space.rodionov.firebasedriller.ui.profile.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="space.rodionov.firebasedriller.ui.profile.SignUpFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_signUpFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="space.rodionov.firebasedriller.ui.profile.WelcomeFragment"
+        android:label="fregment_welcome"
+        tools:layout="@layout/fragment_welcome" >
+        <argument
+            android:name="username"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="null" />
+        <argument
+            android:name="password"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="null" />
+        <argument
+            android:name="madeAction"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_privateNotesFragment"
+            app:destination="@id/privateNotesFragment"
+            app:popUpTo="@id/privateNotesFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/privateNotesFragment"
+        android:name="space.rodionov.firebasedriller.ui.privatenotes.PrivateNotesFragment"
+        android:label="fragment_private_notes"
+        tools:layout="@layout/fragment_private_notes" >
+        <action
+            android:id="@+id/action_privateNotesFragment_to_editNoteFragment"
+            app:destination="@id/editNoteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sharedNotesFragment"
+        android:name="space.rodionov.firebasedriller.ui.sharednotes.SharedNotesFragment"
+        android:label="fragment_shared_notes"
+        tools:layout="@layout/fragment_shared_notes" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="space.rodionov.firebasedriller.ui.settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+    <dialog
+        android:id="@+id/editNoteFragment"
+        android:name="space.rodionov.firebasedriller.ui.privatenotes.EditNoteFragment"
+        android:label="fragment_edit_note"
+        tools:layout="@layout/fragment_edit_note" >
+        <argument
+            android:name="note"
+            app:argType="space.rodionov.firebasedriller.data.Note"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+    </dialog>
+</navigation>

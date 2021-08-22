@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/privateNotesFragment"
+            android:icon="@drawable/ic_notes"
+            android:title="My notes" />
+        <item
+            android:id="@+id/sharedNotesFragment"
+            android:icon="@drawable/ic_shared"
+            android:title="Shared notes" />
+        <item
+            android:id="@+id/settingsFragment"
+            android:icon="@drawable/ic_settings"
+            android:title="Settings" />
+        <item
+            android:id="@+id/profileFragment"
+            android:icon="@drawable/ic_account"
+            android:title="@string/account" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/send_email"
+                android:icon="@drawable/ic_mail"
+                android:title="Email to developer" />
+        </menu>
+    </item>
+
+</menu>
+
+
