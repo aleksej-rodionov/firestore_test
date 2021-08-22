@@ -77,23 +77,28 @@ class EditNoteViewModel @Inject constructor(
         if (auth.currentUser == null) {
             showMsg("You need to log in to create and edit notes")
             return
-        }
-
-        if (note != null) {
-            val noteMap = getNewNoteMap()
-            updateNote(note, noteMap)
         } else {
-            if (auth.currentUser == null) {
-                showMsg("You need to log in to create notes")
-                return
-            }
-
-            auth.currentUser?.let {
-                val newNote = Note(noteText, notePriority, false, authorId = it.uid)
-                createNote(newNote)
+            if (note != null) {
+                val noteMap = getNewNoteMap()
+                updateNote(note, noteMap)
+            } else {
+                auth.currentUser?.let {
+                    val newNote = Note(noteText, notePriority, false, authorId = it.uid)
+                    createNote(newNote)
+                }
             }
         }
     }
+
+    private fun showMsg(msg: String) = viewModelScope.launch {
+        editNoteEventChannel.send(EditNoteEvent.EditNoteSnackbar(msg))
+    }
+
+//==================================ROOM METHODS==============================================
+
+
+
+//===================================FIRESTORE METHODS============================================
 
     private fun updateNote(oldNote: Note, newNoteMap: Map<String, Any>) = viewModelScope.launch {
         val noteQuery = notesCollectionRef
@@ -125,12 +130,6 @@ class EditNoteViewModel @Inject constructor(
         }
     }
 
-    fun showUserId() = viewModelScope.launch {
-        auth.currentUser?.let {
-            showMsg(it.uid)
-        }
-    }
-
     private fun getNewNoteMap(): Map<String, Any> {
         val text = noteText
         val priority = notePriority
@@ -145,10 +144,6 @@ class EditNoteViewModel @Inject constructor(
         map["authorId"] = authorId
         Log.d(TAG, "getNewNoteMap: $map")
         return map
-    }
-
-    private fun showMsg(msg: String) = viewModelScope.launch {
-        editNoteEventChannel.send(EditNoteEvent.EditNoteSnackbar(msg))
     }
 
     private fun createNote(note: Note) = viewModelScope.launch {
