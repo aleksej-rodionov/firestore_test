@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import space.rodionov.firebasedriller.R
 import space.rodionov.firebasedriller.databinding.FragmentProfileBinding
+import space.rodionov.firebasedriller.ui.privatenotes.OnCheckLoginState
 
 private const val TAG = "HomeFragment LOGS"
 
@@ -49,6 +50,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                         }
                         btnLogin.setOnClickListener {
                             viewModel.onLogout()
+                            val listener = activity as OnCheckLoginState
+                            listener.checkLoginState(false)
                         }
                     } else {
                         tvLoginState.text = "You are not logged in"

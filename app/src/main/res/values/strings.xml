@@ -11,4 +11,10 @@
     <string name="you_have_local_notes">You have some notes in local memory which are not uploaded to your account. You can upload them now</string>
     <string name="take_a_look">Take a look</string>
     <string name="skip">Skip</string>
+    <string name="choose_notes_to_upload">Below are the notes stored in local memory. Choose those you want to upload to your account.</string>
+    <string name="choose_all">Choose all</string>
+    <string name="ok">OK</string>
+    <string name="upload">Upload</string>
+    <string name="empty">Now the list is empty</string>
+    <string name="export_to_csv">Export to CSV</string>
 </resources>

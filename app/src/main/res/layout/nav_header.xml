@@ -10,6 +10,7 @@
 
     <ImageView
         android:layout_width="wrap_content"
+        android:id="@+id/iv_ava"
         android:layout_height="wrap_content"
         android:src="@mipmap/ic_launcher_round" />
 
@@ -18,10 +19,12 @@
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
         android:text="Username"
+        android:id="@+id/tv_username"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:layout_width="wrap_content"
+        android:id="@+id/tv_email"
         android:layout_height="wrap_content"
         android:text="email@email.com" />
 

@@ -11,6 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import space.rodionov.firebasedriller.R
 import space.rodionov.firebasedriller.databinding.FragmentWelcomeBinding
+import space.rodionov.firebasedriller.ui.privatenotes.OnCheckLoginState
 
 @AndroidEntryPoint
 class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
@@ -23,13 +24,31 @@ class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentWelcomeBinding.bind(view)
 
+        val listener = activity as OnCheckLoginState
+        listener.checkLoginState(true)
+
         val username = args.username ?: "noname"
 
         binding.apply {
             tvWelcome.text = "Welcome${", "+username}!\nYou successfully ${args.madeAction}"
 
-            btnOk.setOnClickListener {
-                viewModel.ok()
+            btnAction.setOnClickListener {
+                viewModel.onSkip()
+            }
+
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                viewModel.localNotes.collect {
+                    if (it.isNullOrEmpty()) {
+                        tvYouHaveLocalNotes.visibility = View.GONE
+                        btnTakeALook.visibility = View.GONE
+                    } else {
+                        tvYouHaveLocalNotes.visibility = View.VISIBLE
+                        btnTakeALook.visibility = View.VISIBLE
+                        btnTakeALook.setOnClickListener {
+                            viewModel.onLookLocalNotes()
+                        }
+                    }
+                }
             }
         }
 
@@ -38,6 +57,10 @@ class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
                 when (event) {
                     is WelcomeViewModel.WelcomeEvent.NavWelcomeToNotes -> {
                         val action = WelcomeFragmentDirections.actionWelcomeFragmentToPrivateNotesFragment()
+                        findNavController().navigate(action)
+                    }
+                    is WelcomeViewModel.WelcomeEvent.NavWelcomeToLocalNotes -> {
+                        val action = WelcomeFragmentDirections.actionWelcomeFragmentToUploadLocalNotesFragment()
                         findNavController().navigate(action)
                     }
                 }

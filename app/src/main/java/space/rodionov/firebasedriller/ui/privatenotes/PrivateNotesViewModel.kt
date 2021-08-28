@@ -1,8 +1,11 @@
 package space.rodionov.firebasedriller.ui.privatenotes
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -13,6 +16,9 @@ import space.rodionov.firebasedriller.data.MainRepository
 import space.rodionov.firebasedriller.data.Note
 import space.rodionov.firebasedriller.ui.ADD_NOTE_RESULT_OK
 import space.rodionov.firebasedriller.ui.EDIT_NOTE_RESULT_OK
+import space.rodionov.firebasedriller.util.generateFile
+import space.rodionov.firebasedriller.util.goToFileIntent
+import java.io.File
 import javax.inject.Inject
 
 private const val TAG = "ViewModel LOGS"
@@ -25,8 +31,9 @@ class PrivateNotesViewModel @Inject constructor(
 
     val notesCollectionRef = reposiroty.notesCollectionRef
 
-
     val oriList = mutableListOf<Note>()
+
+    val csvFileName = "PrivateNotes.csv"
 
 //===============================FLOWS======================================
 
@@ -44,9 +51,41 @@ class PrivateNotesViewModel @Inject constructor(
         data class NavEditNote(val note: Note) : PrivateNotesEvent()
         data class PrivateNoteInteractiveSnackbar(val msg: String, val note: Note) :
             PrivateNotesEvent()
+        data class GoToFileActivity(val intent: Intent) : PrivateNotesEvent()
     }
 
 //==================================METHODS================================
+
+    private fun exportPrivateNotesToCSVFile(csvFile: File) {
+        csvWriter().open(csvFile, append = false) {
+            // Header
+            writeRow(listOf("[text]", "[is important]", "[is completed]", "[created at]", "[firebase author id]", "[room note id]"))
+            // Body
+            viewModelScope.launch {
+                _notesFlow.collectLatest { notes ->
+                    notes.forEach { n ->
+                        writeRow(n.text, n.important, n.completed, n.created, n.authorId, n.roomId)
+                    }
+                }
+            }
+        }
+    }
+
+    fun exportDataToCSVFile(context: Context) {
+        val csvFile = generateFile(context, csvFileName)
+        if (csvFile != null) {
+            exportPrivateNotesToCSVFile(csvFile)
+            Log.d(TAG, "CSV file generated")
+            val intent = goToFileIntent(context, csvFile)
+            viewModelScope.launch {
+                privateNotesEventChannel.send(PrivateNotesEvent.GoToFileActivity(intent))
+            }
+        } else {
+            viewModelScope.launch {
+                privateNotesEventChannel.send(PrivateNotesEvent.PrivateNotesSnackbar("CSV file not generated"))
+            }
+        }
+    }
 
     fun subscribeToNotes() {
         if (auth.currentUser != null) {

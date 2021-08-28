@@ -1,7 +1,9 @@
 package space.rodionov.firebasedriller.ui.profile
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,8 +19,6 @@ import kotlinx.coroutines.tasks.await
 import space.rodionov.firebasedriller.data.MainRepository
 import java.lang.Exception
 import javax.inject.Inject
-
-const val REQUEST_CODE_SIGN_IN = 1
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -50,7 +50,7 @@ val auth = repository.auth
         data class NavigateLoggedIn(val em: String?, val pw: String?, val ma: String) : LoginEvent()
         object NavigateNotRegistered : LoginEvent()
         data class LoginSnackbar(val msg: String) : LoginEvent()
-        data class LoginActivity(val intent: Intent, val requestCode: Int) : LoginEvent()
+        data class LoginActivity(val intent: Intent) : LoginEvent()
     }
 
 //=============================METHODS===================================
@@ -63,7 +63,7 @@ val auth = repository.auth
         val signInClient = GoogleSignIn.getClient(context, options)
         val intent = signInClient.signInIntent
         viewModelScope.launch {
-            loginEventChannel.send(LoginEvent.LoginActivity(intent, REQUEST_CODE_SIGN_IN))
+            loginEventChannel.send(LoginEvent.LoginActivity(intent))
         }
     }
 

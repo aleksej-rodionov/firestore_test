@@ -58,6 +58,9 @@
             app:destination="@id/privateNotesFragment"
             app:popUpTo="@id/privateNotesFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_uploadLocalNotesFragment"
+            app:destination="@id/uploadLocalNotesFragment" />
     </fragment>
     <fragment
         android:id="@+id/privateNotesFragment"
@@ -92,4 +95,12 @@
             android:name="title"
             app:argType="string" />
     </dialog>
+    <fragment
+        android:id="@+id/uploadLocalNotesFragment"
+        android:name="space.rodionov.firebasedriller.ui.profile.UploadLocalNotesFragment"
+        android:label="UploadLocalNotesFragment" >
+        <action
+            android:id="@+id/action_uploadLocalNotesFragment_to_privateNotesFragment"
+            app:destination="@id/privateNotesFragment" />
+    </fragment>
 </navigation>

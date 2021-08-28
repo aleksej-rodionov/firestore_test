@@ -8,11 +8,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import space.rodionov.firebasedriller.data.Note
 import space.rodionov.firebasedriller.databinding.ItemNoteBinding
+import space.rodionov.firebasedriller.util.NoteComparator
 
 class NotesAdapter(
     private val onNoteClick: (Note) -> Unit,
     private val onCompletedCheck: (Note, Boolean) -> Unit
-) : ListAdapter<Note, NotesAdapter.NotesViewHolder>(NoteDiff()) {
+) : ListAdapter<Note, NotesAdapter.NotesViewHolder>(NoteComparator()) {
 
     inner class NotesViewHolder(
         private val binding: ItemNoteBinding,
@@ -30,13 +31,13 @@ class NotesAdapter(
         init {
             binding.apply {
                 root.setOnClickListener {
-                    val position = adapterPosition
+                    val position = bindingAdapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         onItemClick(position)
                     }
                 }
                 cbCompleted.setOnCheckedChangeListener { _, isChecked ->
-                    val position = adapterPosition
+                    val position = bindingAdapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         onCheckBoxChecked(position, isChecked)
                     }
@@ -67,17 +68,5 @@ class NotesAdapter(
     override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
         val curItem = getItem(position)
         holder.bind(curItem)
-    }
-
-    class NoteDiff : DiffUtil.ItemCallback<Note>() {
-        override fun areItemsTheSame(oldItem: Note, newItem: Note) =
-            oldItem == newItem
-
-        override fun areContentsTheSame(oldItem: Note, newItem: Note) =
-            oldItem.text == newItem.text
-                    && oldItem.created == newItem.created
-                    && oldItem.important == newItem.important
-                    && oldItem.completed == newItem.completed
-
     }
 }

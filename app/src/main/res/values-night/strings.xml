@@ -2,4 +2,5 @@
 <resources>
     <string name="account">Account</string>
     <string name="high_priority">High priority</string>
+    <string name="export_to_csv">Export to CSV</string>
 </resources>

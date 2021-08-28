@@ -3,6 +3,9 @@ package space.rodionov.firebasedriller.ui.privatenotes
 import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -151,9 +154,14 @@ class PrivateNotesFragment : Fragment(R.layout.fragment_private_notes) {
                             .setAction("UNDO") { viewModel.saveNote(event.note) }
                             .show()
                     }
+                    is PrivateNotesViewModel.PrivateNotesEvent.GoToFileActivity -> {
+                        startActivity(event.intent)
+                    }
                 }
             }
         }
+
+        setHasOptionsMenu(true)
     }
 
     fun submitList(notes: List<Note>) {
@@ -165,6 +173,24 @@ class PrivateNotesFragment : Fragment(R.layout.fragment_private_notes) {
         super.onDestroyView()
         _binding = null
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_private_notes, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.export_to_csv -> {
+                viewModel.exportDataToCSVFile(requireContext())
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+}
+
+interface OnCheckLoginState {
+    fun checkLoginState(isLoggedIn: Boolean)
 }
 
 

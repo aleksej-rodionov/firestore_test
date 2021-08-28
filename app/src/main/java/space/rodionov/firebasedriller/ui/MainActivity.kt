@@ -3,6 +3,9 @@ package space.rodionov.firebasedriller.ui
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -11,15 +14,20 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import space.rodionov.firebasedriller.R
 import space.rodionov.firebasedriller.databinding.ActivityMainBinding
+import space.rodionov.firebasedriller.databinding.NavHeaderBinding
+import space.rodionov.firebasedriller.ui.privatenotes.OnCheckLoginState
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnCheckLoginState {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
+
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,10 +48,25 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.navView.setupWithNavController(navController)
+
+        val headerView = binding.navView.getHeaderView(0)
+        val headerBinding = NavHeaderBinding.bind(headerView)
+        headerBinding.apply {
+            lifecycleScope.launchWhenStarted {
+                viewModel.userDataFlow.collect {
+                    tvUsername.text = it.first
+                    tvEmail.text = it.second
+                }
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun checkLoginState(isLoggedIn: Boolean) {
+        viewModel.checkIfLoggedIn(isLoggedIn)
     }
 }
 

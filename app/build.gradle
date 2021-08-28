@@ -114,7 +114,8 @@ dependencies {
     // Item Decorator
     implementation 'com.github.xabaras:RecyclerViewSwipeDecorator:1.3'
 
-
+    // Kotlin-CSV
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.0.0")
 
 }
 

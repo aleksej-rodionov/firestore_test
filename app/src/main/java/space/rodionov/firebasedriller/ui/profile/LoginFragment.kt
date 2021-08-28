@@ -1,16 +1,23 @@
 package space.rodionov.firebasedriller.ui.profile
 
+import android.accounts.Account
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
@@ -75,7 +82,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_LONG).show()
                     }
                     is LoginViewModel.LoginEvent.LoginActivity -> {
-                        startActivityForResult(event.intent, event.requestCode)
+                        googleSignInActivityLauncher.launch(event.intent)
                         Log.d(TAG, "google event collected")
                     }
                 }
@@ -83,25 +90,25 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.d(TAG, "onActivityResult: called, result = $resultCode, requestCode = $requestCode")
-        Log.d(TAG, "onActivityResult: data = $data")
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != Activity.RESULT_CANCELED) {
-            if (requestCode == REQUEST_CODE_SIGN_IN) {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+    val googleSignInActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            Log.d(TAG, "activity result laubcher: result = ${result.resultCode},  data = ${result.data}")
+            if (result.resultCode != Activity.RESULT_CANCELED) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 val account = task.result
                 account?.let { googleAccount ->
                     viewModel.googleAuthForFirebase(googleAccount)
                 }
             }
-        } else {
-            viewModel.onResultCanceled()
         }
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+
+
+
+
+

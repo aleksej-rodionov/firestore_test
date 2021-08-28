@@ -24,7 +24,7 @@
             android:title="@string/account" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Options">
         <menu>
             <item
                 android:id="@+id/send_email"
