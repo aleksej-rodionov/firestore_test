@@ -41,7 +41,7 @@ fun filePickerIntent(context: Context) : Intent {
         .setShowImages(false)
         .setShowVideos(false)
         .setMaxSelection(1)
-        .setSuffixes("csv", "txt", "tsv")
+        .setSuffixes("csv", "txt")
         .setSkipZeroSizeFiles(true)
         .build())
 

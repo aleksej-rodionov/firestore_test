@@ -116,9 +116,7 @@ class PrivateNotesFragment : Fragment(R.layout.fragment_private_notes) {
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.notesFlow.collect {
-                Log.d(TAG, "collect it = ${it ?: null}")
                 val notes = it ?: return@collect
-                Log.d(TAG, "collect: CALLED notes.size = ${notes.size}")
                 submitList(notes)
             }
         }
@@ -181,19 +179,12 @@ class PrivateNotesFragment : Fragment(R.layout.fragment_private_notes) {
                     requireContext().contentResolver.openInputStream(uri)
                 }
                 inputStream?.let {
-                    val rows: List<List<String>> = csvReader {
-                        skipMissMatchedRow = true
-                    }.readAll(it)
-                    rows.forEachIndexed { index, row ->
-                        if (index > 0) Log.d(TAG, row.joinToString("    "))
-
-                    }
+                    viewModel.parseInputStream(it)
                 }
             }
         }
 
     private fun submitList(notes: List<Note>) {
-        Log.d(TAG, "submitList: CALLED")
         notesAdapter.submitList(notes)
     }
 

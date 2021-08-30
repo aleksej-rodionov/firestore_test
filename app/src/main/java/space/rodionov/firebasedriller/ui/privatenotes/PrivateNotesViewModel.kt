@@ -5,6 +5,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ import space.rodionov.firebasedriller.util.filePickerIntent
 import space.rodionov.firebasedriller.util.generateFile
 import space.rodionov.firebasedriller.util.goToFileIntent
 import java.io.File
+import java.io.InputStream
 import javax.inject.Inject
 
 private const val TAG = "ViewModel LOGS"
@@ -28,7 +30,7 @@ private const val TAG = "ViewModel LOGS"
 class PrivateNotesViewModel @Inject constructor(
     private val reposiroty: MainRepository
 ) : ViewModel() {
-    val auth = reposiroty.auth
+    var auth = reposiroty.auth
 
     val notesCollectionRef = reposiroty.notesCollectionRef
 
@@ -52,6 +54,7 @@ class PrivateNotesViewModel @Inject constructor(
         data class NavEditNote(val note: Note) : PrivateNotesEvent()
         data class PrivateNoteInteractiveSnackbar(val msg: String, val note: Note) :
             PrivateNotesEvent()
+
         data class GoToFileActivity(val intent: Intent) : PrivateNotesEvent()
         data class PickFileActivity(val intent: Intent) : PrivateNotesEvent()
     }
@@ -64,10 +67,39 @@ class PrivateNotesViewModel @Inject constructor(
         privateNotesEventChannel.send(PrivateNotesEvent.PickFileActivity(intent))
     }
 
+    fun parseInputStream(inputStream: InputStream) {
+        Log.d(TAG, "parseInputStream: called")
+        val rows: List<List<String>> = csvReader {
+            skipMissMatchedRow = true
+        }.readAll(inputStream)
+        rows.forEachIndexed { index, row ->
+            if (index > 0) {
+                val note = Note(
+                    row[0],
+                    row[1] == "TRUE",
+                    row[2] == "TRUE",
+                    row[3].toLong(),
+                    auth.uid ?: ""
+                )
+                Log.d(TAG, "added note: $note")
+                saveNote(note)
+            }
+        }
+    }
+
     private fun exportPrivateNotesToCSVFile(csvFile: File) {
         csvWriter().open(csvFile, append = false) {
             // Header
-            writeRow(listOf("[text]", "[is important]", "[is completed]", "[created at]", "[firebase author id]", "[room note id]"))
+            writeRow(
+                listOf(
+                    "[text]",
+                    "[is important]",
+                    "[is completed]",
+                    "[created at]",
+                    "[firebase author id]",
+                    "[room note id]"
+                )
+            )
             // Body
             viewModelScope.launch {
                 _notesFlow.collectLatest { notes ->
@@ -271,9 +303,10 @@ class PrivateNotesViewModel @Inject constructor(
         }
     }
 
-    fun saveNoteInFirestore(note: Note) = viewModelScope.launch {
+    private fun saveNoteInFirestore(note: Note) = viewModelScope.launch {
         try {
             notesCollectionRef.add(note).await()
+            Log.d(TAG, "saveNoteInFirestore: note SAVED")
         } catch (e: Exception) {
             privateNotesEventChannel.send(
                 PrivateNotesEvent.PrivateNotesSnackbar(
@@ -281,6 +314,10 @@ class PrivateNotesViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    fun checkLoginState() {
+        auth = reposiroty.auth
     }
 }
 
