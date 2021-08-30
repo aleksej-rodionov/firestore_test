@@ -1,5 +1,6 @@
 package space.rodionov.firebasedriller.ui.privatenotes
 
+import android.app.Activity
 import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -16,17 +18,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
+import com.jaiselrahman.filepicker.activity.FilePickerActivity
+import com.jaiselrahman.filepicker.model.MediaFile
 import dagger.hilt.android.AndroidEntryPoint
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import kotlinx.coroutines.flow.collect
 import space.rodionov.firebasedriller.R
 import space.rodionov.firebasedriller.data.Note
 import space.rodionov.firebasedriller.databinding.FragmentPrivateNotesBinding
-import timber.log.Timber
 
 private const val TAG = "Fragment LOGS"
 
@@ -157,6 +158,9 @@ class PrivateNotesFragment : Fragment(R.layout.fragment_private_notes) {
                     is PrivateNotesViewModel.PrivateNotesEvent.GoToFileActivity -> {
                         startActivity(event.intent)
                     }
+                    is PrivateNotesViewModel.PrivateNotesEvent.PickFileActivity -> {
+                        filePickerActivityLauncher.launch(event.intent)
+                    }
                 }
             }
         }
@@ -164,7 +168,31 @@ class PrivateNotesFragment : Fragment(R.layout.fragment_private_notes) {
         setHasOptionsMenu(true)
     }
 
-    fun submitList(notes: List<Note>) {
+    private val filePickerActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode != Activity.RESULT_CANCELED && result.data != null) {
+                val data = result.data
+                val mediaFiles = data?.getParcelableArrayListExtra<MediaFile>(
+                    FilePickerActivity.MEDIA_FILES
+                )
+                Log.d(TAG, "mediafiles.size = ${mediaFiles?.size}")
+                val uri = mediaFiles?.get(0)?.uri
+                val inputStream = uri?.let {
+                    requireContext().contentResolver.openInputStream(uri)
+                }
+                inputStream?.let {
+                    val rows: List<List<String>> = csvReader {
+                        skipMissMatchedRow = true
+                    }.readAll(it)
+                    rows.forEachIndexed { index, row ->
+                        if (index > 0) Log.d(TAG, row.joinToString("    "))
+
+                    }
+                }
+            }
+        }
+
+    private fun submitList(notes: List<Note>) {
         Log.d(TAG, "submitList: CALLED")
         notesAdapter.submitList(notes)
     }
@@ -182,6 +210,10 @@ class PrivateNotesFragment : Fragment(R.layout.fragment_private_notes) {
         return when (item.itemId) {
             R.id.export_to_csv -> {
                 viewModel.exportDataToCSVFile(requireContext())
+                return true
+            }
+            R.id.import_from_csv -> {
+                viewModel.importDataFromCSVFile(requireContext())
                 return true
             }
             else -> super.onOptionsItemSelected(item)

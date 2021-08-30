@@ -24,7 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import space.rodionov.firebasedriller.R
 import space.rodionov.firebasedriller.databinding.FragmentLoginBinding
-import space.rodionov.firebasedriller.hidden.WEBCLIENT_ID
+import space.rodionov.firebasedriller.WEBCLIENT_ID
 
 private const val TAG = "LoginFragment LOGS"
 
@@ -90,7 +90,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
     }
 
-    val googleSignInActivityLauncher =
+    private val googleSignInActivityLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             Log.d(TAG, "activity result laubcher: result = ${result.resultCode},  data = ${result.data}")
             if (result.resultCode != Activity.RESULT_CANCELED) {

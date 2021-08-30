@@ -7,4 +7,9 @@
         android:title="@string/export_to_csv"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/import_from_csv"
+        android:title="@string/import_from_csv"
+        app:showAsAction="never" />
+
 </menu>

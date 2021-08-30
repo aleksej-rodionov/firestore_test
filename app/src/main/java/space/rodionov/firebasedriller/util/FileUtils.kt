@@ -3,7 +3,11 @@ package space.rodionov.firebasedriller.util
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
+import com.jaiselrahman.filepicker.activity.FilePickerActivity
+import com.jaiselrahman.filepicker.config.Configurations
 import java.io.File
+
+//================================EXPORT=================================
 
 fun generateFile(context: Context, fileName: String): File? {
     val csvFile = File(context.filesDir, fileName)
@@ -16,6 +20,7 @@ fun generateFile(context: Context, fileName: String): File? {
     }
 }
 
+// opens file
 fun goToFileIntent(context: Context, file: File) : Intent {
     val intent = Intent(Intent.ACTION_VIEW)
     val contentUri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
@@ -25,3 +30,25 @@ fun goToFileIntent(context: Context, file: File) : Intent {
 
     return intent
 }
+
+//===============================IMPORT=====================================
+
+fun filePickerIntent(context: Context) : Intent {
+    val intent = Intent(context, FilePickerActivity::class.java)
+    intent.putExtra(FilePickerActivity.CONFIGS, Configurations.Builder()
+        .setCheckPermission(true)
+        .setShowFiles(true)
+        .setShowImages(false)
+        .setShowVideos(false)
+        .setMaxSelection(1)
+        .setSuffixes("csv", "txt", "tsv")
+        .setSkipZeroSizeFiles(true)
+        .build())
+
+    return intent
+}
+
+
+
+
+

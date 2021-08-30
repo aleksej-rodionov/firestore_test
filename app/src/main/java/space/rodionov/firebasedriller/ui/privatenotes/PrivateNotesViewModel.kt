@@ -16,6 +16,7 @@ import space.rodionov.firebasedriller.data.MainRepository
 import space.rodionov.firebasedriller.data.Note
 import space.rodionov.firebasedriller.ui.ADD_NOTE_RESULT_OK
 import space.rodionov.firebasedriller.ui.EDIT_NOTE_RESULT_OK
+import space.rodionov.firebasedriller.util.filePickerIntent
 import space.rodionov.firebasedriller.util.generateFile
 import space.rodionov.firebasedriller.util.goToFileIntent
 import java.io.File
@@ -52,9 +53,16 @@ class PrivateNotesViewModel @Inject constructor(
         data class PrivateNoteInteractiveSnackbar(val msg: String, val note: Note) :
             PrivateNotesEvent()
         data class GoToFileActivity(val intent: Intent) : PrivateNotesEvent()
+        data class PickFileActivity(val intent: Intent) : PrivateNotesEvent()
     }
 
 //==================================METHODS================================
+
+    fun importDataFromCSVFile(context: Context) = viewModelScope.launch {
+        val intent = filePickerIntent(context)
+        Log.d(TAG, "viewModel: Intent created and sent to Channel")
+        privateNotesEventChannel.send(PrivateNotesEvent.PickFileActivity(intent))
+    }
 
     private fun exportPrivateNotesToCSVFile(csvFile: File) {
         csvWriter().open(csvFile, append = false) {

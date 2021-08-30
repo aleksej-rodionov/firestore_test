@@ -17,4 +17,5 @@
     <string name="upload">Upload</string>
     <string name="empty">Now the list is empty</string>
     <string name="export_to_csv">Export to CSV</string>
+    <string name="import_from_csv">Import from csv</string>
 </resources>
