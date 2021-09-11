@@ -18,7 +18,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.google.android.material.snackbar.Snackbar
 import com.jaiselrahman.filepicker.activity.FilePickerActivity
 import com.jaiselrahman.filepicker.model.MediaFile
@@ -39,6 +38,24 @@ class PrivateNotesFragment : Fragment(R.layout.fragment_private_notes) {
     private val binding get() = _binding!!
 
     lateinit var notesAdapter: NotesAdapter
+
+    private val filePickerActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode != Activity.RESULT_CANCELED && result.data != null) {
+                val data = result.data
+                val mediaFiles = data?.getParcelableArrayListExtra<MediaFile>(
+                    FilePickerActivity.MEDIA_FILES
+                )
+                Log.d(TAG, "mediafiles.size = ${mediaFiles?.size}")
+                val uri = mediaFiles?.get(0)?.uri
+                val inputStream = uri?.let {
+                    requireContext().contentResolver.openInputStream(uri)
+                }
+                inputStream?.let {
+                    viewModel.parseInputStream(it)
+                }
+            }
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -166,24 +183,6 @@ class PrivateNotesFragment : Fragment(R.layout.fragment_private_notes) {
         setHasOptionsMenu(true)
     }
 
-    private val filePickerActivityLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode != Activity.RESULT_CANCELED && result.data != null) {
-                val data = result.data
-                val mediaFiles = data?.getParcelableArrayListExtra<MediaFile>(
-                    FilePickerActivity.MEDIA_FILES
-                )
-                Log.d(TAG, "mediafiles.size = ${mediaFiles?.size}")
-                val uri = mediaFiles?.get(0)?.uri
-                val inputStream = uri?.let {
-                    requireContext().contentResolver.openInputStream(uri)
-                }
-                inputStream?.let {
-                    viewModel.parseInputStream(it)
-                }
-            }
-        }
-
     private fun submitList(notes: List<Note>) {
         notesAdapter.submitList(notes)
     }
@@ -212,9 +211,7 @@ class PrivateNotesFragment : Fragment(R.layout.fragment_private_notes) {
     }
 }
 
-interface OnCheckLoginState {
-    fun checkLoginState(isLoggedIn: Boolean)
-}
+
 
 
 

@@ -1,8 +1,11 @@
 package space.rodionov.firebasedriller.ui
 
 import android.app.Activity
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -13,12 +16,14 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import space.rodionov.firebasedriller.R
 import space.rodionov.firebasedriller.databinding.ActivityMainBinding
 import space.rodionov.firebasedriller.databinding.NavHeaderBinding
-import space.rodionov.firebasedriller.ui.privatenotes.OnCheckLoginState
+
+private const val TAG = "MainActivity LOGS"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnCheckLoginState {
@@ -40,7 +45,12 @@ class MainActivity : AppCompatActivity(), OnCheckLoginState {
         navController = navHostFragment.findNavController()
 
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.privateNotesFragment, R.id.sharedNotesFragment, R.id.settingsFragment, R.id.profileFragment),
+            setOf(
+                R.id.privateNotesFragment,
+                R.id.sharedNotesFragment,
+                R.id.settingsFragment,
+                R.id.profileFragment
+            ),
             binding.drawerLayout
         )
 
@@ -56,6 +66,10 @@ class MainActivity : AppCompatActivity(), OnCheckLoginState {
                 viewModel.userDataFlow.collect {
                     tvUsername.text = it.first
                     tvEmail.text = it.second
+                    it.third?.let {
+                        Picasso.get().load(it).into(ivAva)
+                    }
+                    if (it.third == null) ivAva.setImageResource(android.R.color.transparent)
                 }
             }
         }
@@ -68,6 +82,10 @@ class MainActivity : AppCompatActivity(), OnCheckLoginState {
     override fun checkLoginState(isLoggedIn: Boolean) {
         viewModel.checkIfLoggedIn(isLoggedIn)
     }
+}
+
+interface OnCheckLoginState {
+    fun checkLoginState(isLoggedIn: Boolean)
 }
 
 const val ADD_NOTE_RESULT_OK = Activity.RESULT_FIRST_USER

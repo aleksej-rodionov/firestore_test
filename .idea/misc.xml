@@ -3,42 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/drawable-v24/ic_check_large.xml" value="0.19583333333333333" />
-        <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/layout/activity_main.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/layout/fragment_private_notes.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/layout/fragment_shared_notes.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/layout/fragment_upload_local_notes.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/layout/fragment_welcome.xml" value="0.22" />
-        <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/layout/item_local_note.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/layout/layout_local_notes.xml" value="0.1796875" />
+        <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/layout/fragment_profile.xml" value="0.1796875" />
         <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/layout/nav_header.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/menu/menu_drawer.xml" value="0.1796875" />
         <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/menu/menu_private_notes.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/AppData/Local/GitHubDesktop/app-2.8.3/firestore_test/app/src/main/res/xml/file_paths.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/drawable/ic_account.xml" value="0.19583333333333333" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/drawable/ic_mail.xml" value="0.19583333333333333" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/drawable/ic_notes.xml" value="0.19583333333333333" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/drawable/ic_settings.xml" value="0.19583333333333333" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/drawable/ic_shared.xml" value="0.19583333333333333" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/layout/activity_main.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/layout/fragment_edit_note.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/layout/fragment_home.xml" value="0.16666666666666666" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/layout/fragment_login.xml" value="0.22" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/layout/fragment_private_notes.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/layout/fragment_register.xml" value="0.1" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/layout/fragment_settings.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/layout/fragment_shared_notes.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/layout/fragment_welcome.xml" value="0.22" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/layout/item_note.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/layout/nav_header.xml" value="0.1796875" />
-        <entry key="..\:/Users/HomoSapiens/Documents/GitHub/FirebaseDriller/app/src/main/res/menu/menu_drawer.xml" value="0.1796875" />
       </map>
     </option>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/build/classes" />
-  </component>
-  <component name="ProjectType">
-    <option name="id" value="Android" />
+    <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

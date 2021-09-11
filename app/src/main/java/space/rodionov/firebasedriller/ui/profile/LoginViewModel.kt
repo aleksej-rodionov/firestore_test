@@ -25,7 +25,7 @@ class LoginViewModel @Inject constructor(
     private val repository: MainRepository,
     private val state: SavedStateHandle
 ) : ViewModel() {
-val auth = repository.auth
+    val auth = repository.auth
 
     var em = state.get<String>("email") ?: ""
         set(value) {
@@ -68,7 +68,10 @@ val auth = repository.auth
     }
 
     fun googleAuthForFirebase(account: GoogleSignInAccount) { // запускаем гугл-аккаунт в качестве аргумента
-        val credentials =  GoogleAuthProvider.getCredential(account.idToken, null) // получаем реквизиты для входа в гуглАккаунт, запущенный как аргумент в эту фенкцию
+        val credentials = GoogleAuthProvider.getCredential(
+            account.idToken,
+            null
+        ) // получаем реквизиты для входа в гуглАккаунт, запущенный как аргумент в эту фенкцию
         viewModelScope.launch {
             try {
                 auth.signInWithCredential(credentials).await()

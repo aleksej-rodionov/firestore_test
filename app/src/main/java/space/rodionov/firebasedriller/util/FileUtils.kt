@@ -7,7 +7,23 @@ import com.jaiselrahman.filepicker.activity.FilePickerActivity
 import com.jaiselrahman.filepicker.config.Configurations
 import java.io.File
 
-//================================EXPORT=================================
+//===============================IMAGE PICKER================================
+
+fun imagePickerIntent(context: Context) : Intent {
+    val intent = Intent(context, FilePickerActivity::class.java)
+    intent.putExtra(FilePickerActivity.CONFIGS, Configurations.Builder()
+        .setCheckPermission(true)
+        .setShowImages(true)
+        .setShowVideos(false)
+        .enableImageCapture(true)
+        .setMaxSelection(1)
+        .setSkipZeroSizeFiles(true)
+        .build())
+
+    return intent
+}
+
+//================================EXPORT CSV=================================
 
 fun generateFile(context: Context, fileName: String): File? {
     val csvFile = File(context.filesDir, fileName)
@@ -31,7 +47,7 @@ fun goToFileIntent(context: Context, file: File) : Intent {
     return intent
 }
 
-//===============================IMPORT=====================================
+//===============================IMPORT CSV=====================================
 
 fun filePickerIntent(context: Context) : Intent {
     val intent = Intent(context, FilePickerActivity::class.java)

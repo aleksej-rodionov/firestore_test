@@ -1,5 +1,6 @@
 package space.rodionov.firebasedriller.ui
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -17,18 +18,20 @@ class MainViewModel @Inject constructor(
 
     var username = auth.currentUser?.displayName ?: "Not logged in"
     val email = auth.currentUser?.email ?: ""
-    private val _userDataFlow = MutableStateFlow(Pair(username, email))
-    val userDataFlow: StateFlow<Pair<String, String>> = _userDataFlow.asStateFlow()
+    val photoUrl = auth.currentUser?.photoUrl
+    private val _userDataFlow = MutableStateFlow(Triple(username, email, photoUrl))
+    val userDataFlow: StateFlow<Triple<String, String, Uri?>> = _userDataFlow.asStateFlow()
 
     fun checkIfLoggedIn(isLoggedIn: Boolean) {
         if (isLoggedIn) {
             auth.currentUser?.let {
                 val un = it.displayName ?: "User"
                 val em = it.email ?: "Email"
-                _userDataFlow.value = Pair(un, em)
+                val pu = it.photoUrl
+                _userDataFlow.value = Triple(un, em, pu)
             }
         } else {
-            _userDataFlow.value = Pair("Not logged in", "")
+            _userDataFlow.value = Triple("Not logged in", "", null)
         }
     }
 }
